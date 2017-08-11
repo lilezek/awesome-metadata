@@ -28,7 +28,7 @@
     "typescript": "^2.5.0-dev.20170808"
   },
   "bin": {
-    "atm": "./bin/index.js"
+    "atm": "./cli.js"
   },
   "devDependencies": {
     "@types/glob": "^5.0.30",

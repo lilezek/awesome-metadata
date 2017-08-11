@@ -85,3 +85,4 @@ class TypeScriptProject {
     }
 }
 exports.TypeScriptProject = TypeScriptProject;
+//# sourceMappingURL=project.js.map

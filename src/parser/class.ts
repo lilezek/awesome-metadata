@@ -11,6 +11,7 @@ interface IDeclaration {
 }
 
 enum EVisibility {
+  NONE,
   PUBLIC,
   PRIVATE,
   PROTECTED,
@@ -123,6 +124,29 @@ export class Class implements IClass {
         chorizo: (prop.type ? prop.type.getText() : ""),
       };
       this.members.push(member);
+    } else if (node.kind === ts.SyntaxKind.Constructor) {
+      const constructor = node as ts.ConstructorDeclaration;
+      constructor.parameters.forEach((parameter) => {
+        if (parameter.modifiers) {
+          let visibility = EVisibility.NONE;
+          parameter.modifiers.forEach((modifier) => {
+            if (modifier.kind === ts.SyntaxKind.PrivateKeyword) {
+              visibility = EVisibility.PRIVATE;
+            } else if (modifier.kind === ts.SyntaxKind.PublicKeyword) {
+              visibility = EVisibility.PUBLIC;
+            } else if (modifier.kind === ts.SyntaxKind.ProtectedKeyword) {
+              visibility = EVisibility.PROTECTED;
+            }
+          });
+          if (visibility !== EVisibility.NONE) {
+            this.members.push({
+              visibility,
+              name: parameter.name.getText(),
+              type: { chorizo: (parameter.type ? parameter.type.getText() : "any") },
+            });
+          }
+        }
+      });
     } else if (node.kind === ts.SyntaxKind.MethodDeclaration) {
       // TODO: do something with methods.
       // const method = node as ts.MethodDeclaration;

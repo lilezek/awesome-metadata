@@ -3,9 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ts = require("typescript");
 var EVisibility;
 (function (EVisibility) {
-    EVisibility[EVisibility["PUBLIC"] = 0] = "PUBLIC";
-    EVisibility[EVisibility["PRIVATE"] = 1] = "PRIVATE";
-    EVisibility[EVisibility["PROTECTED"] = 2] = "PROTECTED";
+    EVisibility[EVisibility["NONE"] = 0] = "NONE";
+    EVisibility[EVisibility["PUBLIC"] = 1] = "PUBLIC";
+    EVisibility[EVisibility["PRIVATE"] = 2] = "PRIVATE";
+    EVisibility[EVisibility["PROTECTED"] = 3] = "PROTECTED";
 })(EVisibility || (EVisibility = {}));
 class Class {
     constructor(cl, typechecker) {
@@ -94,6 +95,32 @@ class Class {
             };
             this.members.push(member);
         }
+        else if (node.kind === ts.SyntaxKind.Constructor) {
+            const constructor = node;
+            constructor.parameters.forEach((parameter) => {
+                if (parameter.modifiers) {
+                    let visibility = EVisibility.NONE;
+                    parameter.modifiers.forEach((modifier) => {
+                        if (modifier.kind === ts.SyntaxKind.PrivateKeyword) {
+                            visibility = EVisibility.PRIVATE;
+                        }
+                        else if (modifier.kind === ts.SyntaxKind.PublicKeyword) {
+                            visibility = EVisibility.PUBLIC;
+                        }
+                        else if (modifier.kind === ts.SyntaxKind.ProtectedKeyword) {
+                            visibility = EVisibility.PROTECTED;
+                        }
+                    });
+                    if (visibility !== EVisibility.NONE) {
+                        this.members.push({
+                            visibility,
+                            name: parameter.name.getText(),
+                            type: { chorizo: (parameter.type ? parameter.type.getText() : "any") },
+                        });
+                    }
+                }
+            });
+        }
         else if (node.kind === ts.SyntaxKind.MethodDeclaration) {
             // TODO: do something with methods.
             // const method = node as ts.MethodDeclaration;
@@ -131,3 +158,4 @@ class Class {
     }
 }
 exports.Class = Class;
+//# sourceMappingURL=class.js.map

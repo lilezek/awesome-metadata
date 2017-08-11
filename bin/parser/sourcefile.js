@@ -38,3 +38,4 @@ class SourceFile {
     }
 }
 exports.SourceFile = SourceFile;
+//# sourceMappingURL=sourcefile.js.map

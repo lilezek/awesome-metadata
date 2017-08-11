@@ -36,3 +36,4 @@ class EmitterFile {
     }
 }
 exports.EmitterFile = EmitterFile;
+//# sourceMappingURL=EmitterFile.js.map
