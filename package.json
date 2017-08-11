@@ -1,0 +1,37 @@
+{
+  "name": "awesome-metadata",
+  "version": "0.0.1",
+  "description": "Better metadata emitter for TypeScript.",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/lilezek/awesome-metadata.git"
+  },
+  "keywords": [
+    "metadata",
+    "typescript",
+    "emitter"
+  ],
+  "author": "Ezequiel Santamaria Navarro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lilezek/awesome-metadata/issues"
+  },
+  "homepage": "https://github.com/lilezek/awesome-metadata#readme",
+  "dependencies": {
+    "glob": "^7.1.2",
+    "reflect-metadata": "^0.1.10",
+    "ts-modern-async": "git+https://github.com/lilezek/node-ts-modern-async.git",
+    "typescript": "^2.5.0-dev.20170808"
+  },
+  "bin": {
+    "atm": "./bin/index.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^5.0.30",
+    "@types/node": "^8.0.20"
+  }
+}
