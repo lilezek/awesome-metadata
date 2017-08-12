@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ts = require("typescript");
+const type_1 = require("./type");
 var EVisibility;
 (function (EVisibility) {
     EVisibility[EVisibility["NONE"] = 0] = "NONE";
@@ -25,17 +26,19 @@ class Class {
     getAbsolutePath() {
         return this.cl.getSourceFile().fileName;
     }
+    toJSONString() {
+        return `{
+      constructor: ${this.name}
+    }`;
+    }
     toMetadataArray() {
-        const body = {};
+        let body = "";
         this.members.forEach((member) => {
-            body[member.name] = {
-                type: member.type.chorizo,
-                visibility: member.visibility,
-            };
+            body += `${member.name}: {type: ${member.type.stringify()}, visibility: ${member.visibility}},`;
         });
         return [{
                 name: "atm:body",
-                value: body,
+                value: `{${body}}`,
             }];
     }
     traverse(node) {
@@ -90,9 +93,7 @@ class Class {
             }
             member.name = prop.name.getText();
             // TODO: Use a better form of obtaining the type
-            member.type = {
-                chorizo: (prop.type ? prop.type.getText() : ""),
-            };
+            member.type = new type_1.Type(prop.type, this.typechecker);
             this.members.push(member);
         }
         else if (node.kind === ts.SyntaxKind.Constructor) {
@@ -115,7 +116,7 @@ class Class {
                         this.members.push({
                             visibility,
                             name: parameter.name.getText(),
-                            type: { chorizo: (parameter.type ? parameter.type.getText() : "any") },
+                            type: new type_1.Type(parameter.type, this.typechecker),
                         });
                     }
                 }

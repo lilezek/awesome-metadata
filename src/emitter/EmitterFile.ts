@@ -1,8 +1,9 @@
 import path = require("path");
+import { IType } from "../parser/type";
 
 interface IMetadata {
   name: string;
-  value: any;
+  value: string;
 }
 
 interface ISymbol {
@@ -50,6 +51,6 @@ export class EmitterFile {
 
     return `// tslint:disable\nimport "reflect-metadata";\n` +
       imports.map((s) => `import {${s.names.reduce((a, b) => a + ", " + b)}} from "${s.path}";\n`).reduce((a, b) => a + b) +
-      metadatas.map((metadata) => `Reflect.defineMetadata("${metadata.name}", ${JSON.stringify(metadata.value)}, ${metadata.target});\n`).reduce((a, b) => a + b, "");
+      metadatas.map((metadata) => `Reflect.defineMetadata("${metadata.name}", ${metadata.value}, ${metadata.target});\n`).reduce((a, b) => a + b, "");
   }
 }

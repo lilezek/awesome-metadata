@@ -1,13 +1,10 @@
 import * as ts from "typescript";
 import { IInterface } from "./interface";
-
-interface IType {
-  chorizo: string;
-}
+import { IType, Type } from "./type";
 
 interface IDeclaration {
   name: string;
-  type: IType;
+  type: Type;
 }
 
 enum EVisibility {
@@ -56,17 +53,20 @@ export class Class implements IClass {
     return this.cl.getSourceFile().fileName;
   }
 
+  public toJSONString() {
+    return `{
+      constructor: ${this.name}
+    }`;
+  }
+
   public toMetadataArray() {
-    const body = {} as any;
+    let body = "";
     this.members.forEach((member) => {
-      body[member.name] = {
-        type: member.type.chorizo,
-        visibility: member.visibility,
-      };
+      body += `${member.name}: {type: ${member.type.stringify()}, visibility: ${member.visibility}},`;
     });
     return [{
       name: "atm:body",
-      value: body,
+      value: `{${body}}`,
     }];
   }
 
@@ -120,9 +120,7 @@ export class Class implements IClass {
       }
       member.name = prop.name.getText();
       // TODO: Use a better form of obtaining the type
-      member.type = {
-        chorizo: (prop.type ? prop.type.getText() : ""),
-      };
+      member.type = new Type(prop.type, this.typechecker);
       this.members.push(member);
     } else if (node.kind === ts.SyntaxKind.Constructor) {
       const constructor = node as ts.ConstructorDeclaration;
@@ -142,7 +140,7 @@ export class Class implements IClass {
             this.members.push({
               visibility,
               name: parameter.name.getText(),
-              type: { chorizo: (parameter.type ? parameter.type.getText() : "any") },
+              type: new Type(parameter.type, this.typechecker),
             });
           }
         }

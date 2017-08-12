@@ -10,7 +10,8 @@
         ],
         "object-literal-sort-keys": [
             false
-        ]
+        ],
+        "forin": false
     },
     "rulesDirectory": []
 }
