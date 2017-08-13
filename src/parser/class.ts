@@ -1,10 +1,14 @@
 import * as ts from "typescript";
-import { IInterface } from "./interface";
 import { IType, Type } from "./type";
+
+interface IInterface {
+  
+}
 
 interface IDeclaration {
   name: string;
   type: Type;
+  optional: boolean;
 }
 
 enum EVisibility {
@@ -62,7 +66,7 @@ export class Class implements IClass {
   public toMetadataArray() {
     let body = "";
     this.members.forEach((member) => {
-      body += `${member.name}: {type: ${member.type.stringify()}, visibility: ${member.visibility}},`;
+      body += `${member.name}: {type: ${member.type.stringify()}, visibility: ${member.visibility}, optional: ${member.optional}},`;
     });
     return [{
       name: "atm:body",
@@ -109,6 +113,7 @@ export class Class implements IClass {
       const member = {} as IDeclaration & IVisibility;
       const prop = node as ts.PropertyDeclaration;
       member.visibility = EVisibility.PROTECTED;
+      member.optional = prop.questionToken !== undefined;
       if (prop.modifiers) {
         prop.modifiers.forEach((element) => {
           if (element.kind === ts.SyntaxKind.PublicKeyword) {
@@ -120,7 +125,7 @@ export class Class implements IClass {
       }
       member.name = prop.name.getText();
       // TODO: Use a better form of obtaining the type
-      member.type = new Type(prop.type, this.typechecker);
+      member.type = new Type(prop.type || prop.name, this.typechecker);
       this.members.push(member);
     } else if (node.kind === ts.SyntaxKind.Constructor) {
       const constructor = node as ts.ConstructorDeclaration;
@@ -140,7 +145,8 @@ export class Class implements IClass {
             this.members.push({
               visibility,
               name: parameter.name.getText(),
-              type: new Type(parameter.type, this.typechecker),
+              type: new Type(parameter.type || parameter.name, this.typechecker),
+              optional: parameter.questionToken !== undefined,
             });
           }
         }

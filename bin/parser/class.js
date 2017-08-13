@@ -34,7 +34,7 @@ class Class {
     toMetadataArray() {
         let body = "";
         this.members.forEach((member) => {
-            body += `${member.name}: {type: ${member.type.stringify()}, visibility: ${member.visibility}},`;
+            body += `${member.name}: {type: ${member.type.stringify()}, visibility: ${member.visibility}, optional: ${member.optional}},`;
         });
         return [{
                 name: "atm:body",
@@ -81,6 +81,7 @@ class Class {
             const member = {};
             const prop = node;
             member.visibility = EVisibility.PROTECTED;
+            member.optional = prop.questionToken !== undefined;
             if (prop.modifiers) {
                 prop.modifiers.forEach((element) => {
                     if (element.kind === ts.SyntaxKind.PublicKeyword) {
@@ -93,7 +94,7 @@ class Class {
             }
             member.name = prop.name.getText();
             // TODO: Use a better form of obtaining the type
-            member.type = new type_1.Type(prop.type, this.typechecker);
+            member.type = new type_1.Type(prop.type || prop.name, this.typechecker);
             this.members.push(member);
         }
         else if (node.kind === ts.SyntaxKind.Constructor) {
@@ -116,7 +117,8 @@ class Class {
                         this.members.push({
                             visibility,
                             name: parameter.name.getText(),
-                            type: new type_1.Type(parameter.type, this.typechecker),
+                            type: new type_1.Type(parameter.type || parameter.name, this.typechecker),
+                            optional: parameter.questionToken !== undefined,
                         });
                     }
                 }

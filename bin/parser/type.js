@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ts = require("typescript");
+const interface_1 = require("./interface");
 var ETypes;
 (function (ETypes) {
     ETypes[ETypes["PRIMITIVE"] = 0] = "PRIMITIVE";
@@ -19,6 +20,7 @@ class Type {
     constructor(tnode, typechecker) {
         this.tnode = tnode;
         this.typechecker = typechecker;
+        this.optional = false;
         this.traverse(tnode);
     }
     toType() {
@@ -41,17 +43,12 @@ class Type {
             (this.left ? ",left:" + this.left.stringify() : "") +
             (this.right ? ",right:" + this.right.stringify() : "") +
             (this.primitive ? ",primitive: \"" + this.primitive + "\"" : "") +
+            (this.body ? ",body: " + this.body.stringify() : "") +
             (this.generics && this.generics.length ? ",generics: [" + this.generics.map((v) => v.stringify()).reduce((a, b) => a + "," + b) + "]" : "") +
             "}";
-        // TODO: Add body
-        // ${this.body ? ",body:" + map(this.body, (key, value) => value.stringify()) : ""},
     }
     traverse(node) {
-        if (!node) {
-            this.kind = ETypes.PRIMITIVE;
-            this.primitive = "any";
-        }
-        else if (node.kind === ts.SyntaxKind.ArrayType) {
+        if (node.kind === ts.SyntaxKind.ArrayType) {
             const anode = node;
             this.kind = ETypes.CLASS;
             this.ctor = "Array";
@@ -59,12 +56,114 @@ class Type {
         }
         else if (node.kind === ts.SyntaxKind.TypeReference) {
             const anode = node;
-            // TODO: Extract path of reference
-            this.path = "";
-            // TODO: Check if it is either a class or interface
-            this.kind = ETypes.CLASS;
-            // TODO: Do not use getText, resolve the type instead.
-            this.ctor = anode.typeName.getText();
+            const type = this.typechecker.getTypeAtLocation(anode);
+            const symbol = type.symbol || type.aliasSymbol;
+            if (type && symbol) {
+                const decls = symbol.getDeclarations();
+                // TODO: parse all declarations, not only the first
+                const decl = decls[0];
+                if (decl.kind === ts.SyntaxKind.EnumDeclaration) {
+                    this.kind = ETypes.PRIMITIVE;
+                    this.primitive = "number";
+                }
+                else if (decl.kind === ts.SyntaxKind.ClassDeclaration) {
+                    this.kind = ETypes.CLASS;
+                    this.ctor = anode.getText();
+                    this.path = decl.getSourceFile().fileName;
+                }
+                else if (decl.kind === ts.SyntaxKind.InterfaceDeclaration) {
+                    this.kind = ETypes.INTERFACE;
+                    this.body = new interface_1.Interface(decl, this.typechecker);
+                }
+                else if (decl.kind === ts.SyntaxKind.TypeAliasDeclaration) {
+                    const alias = decl;
+                    this.traverse(alias.type);
+                }
+                else {
+                    console.error(decl.kind);
+                }
+            }
+            else {
+                throw new Error("This AST contains a TypeReference without declaration");
+            }
+        }
+        else if (node.kind === ts.SyntaxKind.StringKeyword) {
+            this.kind = ETypes.PRIMITIVE;
+            this.primitive = "string";
+        }
+        else if (node.kind === ts.SyntaxKind.BooleanKeyword) {
+            this.kind = ETypes.PRIMITIVE;
+            this.primitive = "boolean";
+        }
+        else if (node.kind === ts.SyntaxKind.AnyKeyword) {
+            this.kind = ETypes.PRIMITIVE;
+            this.primitive = "any";
+        }
+        else if (node.kind === ts.SyntaxKind.NumberKeyword) {
+            this.kind = ETypes.PRIMITIVE;
+            this.primitive = "number";
+        }
+        else if (node.kind === ts.SyntaxKind.UndefinedKeyword) {
+            this.kind = ETypes.PRIMITIVE;
+            this.primitive = "undefined";
+        }
+        else if (node.kind === ts.SyntaxKind.NullKeyword) {
+            this.kind = ETypes.PRIMITIVE;
+            this.primitive = "null";
+        }
+        else if (node.kind === ts.SyntaxKind.ObjectKeyword) {
+            this.kind = ETypes.PRIMITIVE;
+            this.primitive = "object";
+        }
+        else if (node.kind === ts.SyntaxKind.TypeLiteral) {
+            this.kind = ETypes.INTERFACE;
+            this.body = new interface_1.Interface(node, this.typechecker);
+        }
+        else if (node.kind === ts.SyntaxKind.Identifier) {
+            const type = this.typechecker.getTypeAtLocation(node);
+            const symbol = type.symbol || type.aliasSymbol;
+            if (type && symbol) {
+                const decls = symbol.getDeclarations();
+                // TODO: parse all declarations, not only the first
+                const decl = decls[0];
+                if (decl.kind === ts.SyntaxKind.EnumDeclaration) {
+                    this.kind = ETypes.PRIMITIVE;
+                    this.primitive = "number";
+                }
+                else if (decl.kind === ts.SyntaxKind.ClassDeclaration) {
+                    this.kind = ETypes.CLASS;
+                    this.ctor = node.getText();
+                    this.path = decl.getSourceFile().fileName;
+                }
+                else if (decl.kind === ts.SyntaxKind.InterfaceDeclaration) {
+                    this.kind = ETypes.INTERFACE;
+                    this.body = new interface_1.Interface(decl, this.typechecker);
+                }
+                else if (decl.kind === ts.SyntaxKind.TypeAliasDeclaration) {
+                    const alias = decl;
+                    this.traverse(alias.type);
+                }
+                else {
+                    console.error(decl.kind);
+                }
+            }
+            else if (type.intrinsicName) {
+                this.kind = ETypes.PRIMITIVE;
+                this.primitive = type.intrinsicName;
+            }
+            else {
+                throw new Error("This AST contains a TypeReference without declaration");
+            }
+        }
+        else if (node.kind === ts.SyntaxKind.UnionType) {
+            const union = node;
+            this.kind = ETypes.UNION;
+            this.and = false;
+            this.left = new Type(union.types[0], this.typechecker);
+            this.right = new Type(union.types[1], this.typechecker);
+        }
+        else {
+            console.error(node.kind);
         }
     }
 }
