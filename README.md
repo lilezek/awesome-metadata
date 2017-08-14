@@ -3,6 +3,10 @@ Awesome metadata emitter for TypeScript. Generates a typescript file which emits
 
 This utility makes automatic serialization and deseralization possible with the library [TSON](https://github.com/lilezek/tson). 
 
+You can see an example of emitted metadata in this project at [src/metadata.ts](https://github.com/lilezek/awesome-metadata/blob/master/src/metadata.ts).
+
+
+
 # Goals
 
 The goal of this project is to offer metadata for all elements in TypeScript, being as simple as possible. 
