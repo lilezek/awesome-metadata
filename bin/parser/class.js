@@ -8,7 +8,7 @@ var EVisibility;
     EVisibility[EVisibility["PUBLIC"] = 1] = "PUBLIC";
     EVisibility[EVisibility["PRIVATE"] = 2] = "PRIVATE";
     EVisibility[EVisibility["PROTECTED"] = 3] = "PROTECTED";
-})(EVisibility || (EVisibility = {}));
+})(EVisibility = exports.EVisibility || (exports.EVisibility = {}));
 class Class {
     constructor(cl, typechecker) {
         this.cl = cl;

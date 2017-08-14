@@ -7,6 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 const EmitterFile_1 = require("./emitter/EmitterFile");
 const project_1 = require("./parser/project");
@@ -23,4 +26,5 @@ function main() {
     });
 }
 main();
+__export(require("./export/types"));
 //# sourceMappingURL=index.js.map

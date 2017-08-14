@@ -13,3 +13,5 @@ async function main() {
 }
 
 main();
+
+export * from "./export/types";

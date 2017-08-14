@@ -19,20 +19,10 @@ class SourceFile {
     traverse(node) {
         if (node.kind === ts.SyntaxKind.ClassDeclaration) {
             const cl = node;
-            // if (cl.name && cl.heritageClauses) {
-            // console.log(cl.name.text);
-            // console.log(cl.heritageClauses.map((v) => v.getText()));
-            // }
             this.classes.push(new class_1.Class(cl, this.typechecker));
         }
-        else if (node.kind === ts.SyntaxKind.ImportDeclaration) {
-            const impn = node;
-            // Path: console.log(imp.moduleSpecifier.getText());
-            // console.log(impn.getText());
-        }
-        else if (node.kind === ts.SyntaxKind.ImportEqualsDeclaration) {
-            const impn = node;
-            // Path console.log((impn.moduleReference as ts.ExternalModuleReference).expression);
+        else if (node.kind === ts.SyntaxKind.InterfaceDeclaration) {
+            // TODO: Do something with interfaces.
         }
         ts.forEachChild(node, this.traverse.bind(this));
     }

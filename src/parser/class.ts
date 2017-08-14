@@ -1,28 +1,28 @@
 import * as ts from "typescript";
 import { IType, Type } from "./type";
 
-interface IInterface {
+export interface IInterface {
   
 }
 
-interface IDeclaration {
+export interface IDeclaration {
   name: string;
   type: Type;
   optional: boolean;
 }
 
-enum EVisibility {
+export enum EVisibility {
   NONE,
   PUBLIC,
   PRIVATE,
   PROTECTED,
 }
 
-interface IVisibility {
+export interface IVisibility {
   visibility: EVisibility;
 }
 
-interface IClass {
+export interface IClass {
   name: string;
   inherits?: IClass;
   implements: IInterface[];

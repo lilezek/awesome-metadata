@@ -32,34 +32,7 @@ export class TypeScriptProject {
     });
     // TODO: Check for errors
     this.configuration = projectFile.config;
-
-    // let sourceFile = ts.createSourceFile(fileName, readFileSync(fileName).toString(), ts.ScriptTarget.ES6, /*setParentNodes */ true);
-
-    // delint it
-    // delint(sourceFile);
   }
-
-  // public JSONSerial(): UMLClassDiagram {
-  //   // console.log(this.program.getSourceFiles()[0].)
-  //   return {
-  //     classes: this.traversedSourceFiles.map((v) => {
-  //       return v.getClasses().map((v2) => {
-  //         return v2.toUMLSerial();
-  //       });
-  //     }).reduce((acum, val) => {
-  //       return acum.concat(val);
-  //     }),
-  //     rels: this.traversedSourceFiles.map((v) => {
-  //       return v.getClasses().map((v2) => {
-  //         return v2.getRelationships();
-  //       });
-  //     }).reduce((acum, val) => {
-  //       return acum.concat(val);
-  //     }).reduce((acum, val) => {
-  //       return acum.concat(val);
-  //     }),
-  //   };
-  // }
 
   private async findProjectfiles() {
     return new Promise<TypeScriptProject>((resolve, reject) => {

@@ -1,12 +1,12 @@
 import path = require("path");
 import { IType } from "../parser/type";
 
-interface IMetadata {
+export interface IMetadata {
   name: string;
   value: string;
 }
 
-interface ISymbol {
+export interface ISymbol {
   getName(): string;
   getAbsolutePath(): string;
   toMetadataArray(): IMetadata[];
