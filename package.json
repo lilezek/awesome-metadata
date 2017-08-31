@@ -1,6 +1,6 @@
 {
   "name": "awesome-metadata",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Better metadata emitter for TypeScript.",
   "main": "bin/index.js",
   "module": "bin/index",
