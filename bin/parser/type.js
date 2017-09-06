@@ -16,6 +16,27 @@ function map(obj, fn) {
     }
     return result;
 }
+/**
+ * HACK: Hardcoded list of names that are classes and not interfaces.
+ * A real solution should check all the declarations to determine if class or not.
+ */
+const hardcodedClasses = {
+    String: {
+        path: "",
+    },
+    Boolean: {
+        path: "",
+    },
+    Number: {
+        path: "",
+    },
+    Date: {
+        path: "",
+    },
+    Object: {
+        path: "",
+    },
+};
 class Type {
     constructor(tnode, typechecker) {
         this.tnode = tnode;
@@ -72,8 +93,16 @@ class Type {
                     this.path = decl.getSourceFile().fileName;
                 }
                 else if (decl.kind === ts.SyntaxKind.InterfaceDeclaration) {
-                    this.kind = ETypes.INTERFACE;
-                    this.body = new interface_1.Interface(decl, this.typechecker);
+                    const interfaceName = anode.typeName.getText();
+                    if (hardcodedClasses.hasOwnProperty(interfaceName)) {
+                        this.kind = ETypes.CLASS;
+                        this.ctor = anode.getText();
+                        this.path = hardcodedClasses[interfaceName].path;
+                    }
+                    else {
+                        this.kind = ETypes.INTERFACE;
+                        this.body = new interface_1.Interface(decl, this.typechecker);
+                    }
                 }
                 else if (decl.kind === ts.SyntaxKind.TypeAliasDeclaration) {
                     const alias = decl;

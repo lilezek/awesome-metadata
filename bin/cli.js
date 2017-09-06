@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const EmitterFile_1 = require("./emitter/EmitterFile");
 const project_1 = require("./parser/project");
+class ayy {
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const project = yield project_1.TypeScriptProject.create("tsconfig.json");
