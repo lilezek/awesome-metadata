@@ -1,11 +1,14 @@
 # Summary
 Awesome metadata emitter for TypeScript. Generates a typescript file which emits additional metadata, even though there is no decorators placed in those classes.
 
-This utility makes automatic serialization and deseralization possible with the library [TSON](https://github.com/lilezek/tson). 
-
 You can see an example of emitted metadata in this project at [src/metadata.ts](https://github.com/lilezek/awesome-metadata/blob/master/src/metadata.ts).
 
+# Libraries using atm at the moment
 
+* [TSON](https://github.com/lilezek/tson): This library makes automatic serialization and deseralization possible, like GSON for Java.
+* [ts-mongoose-metadata](https://github.com/lilezek/ts-mongoose-metadata) Generates mongoose schemas automatically from class metadata.
+* [ts-express-validator](https://github.com/lilezek/ts-express-validator) Middleware for express that automatically deserializes the body of a request,
+and checks if the data is valid.
 
 # Goals
 
