@@ -1,7 +1,10 @@
 # Summary
-Awesome metadata emitter for TypeScript. Generates a typescript file which emits additional metadata, even though there is no decorators placed in those classes.
+Awesome metadata emitter for TypeScript. Injects fake decorators in every class with additional information, to be accessed by other libraries
+and utilities.
 
-You can see an example of emitted metadata in this project at [src/metadata.ts](https://github.com/lilezek/awesome-metadata/blob/master/src/metadata.ts).
+<!-- 
+You can see an example of emitted metadata in this project at [src/metadata.ts](https://github.com/lilezek/awesome-metadata/blob/master/src/metadata.ts). 
+-->
 
 # Libraries using atm at the moment
 
@@ -34,14 +37,8 @@ The goal of this project is to offer metadata for all elements in TypeScript, be
 
 # Usage
 
-When installed using npm, this library installs a cli:
-
-```sh
-atm > metadata.ts
-```
-
-This generates a typescript file which emits metadata of everything even if it is not decorated. When included, you can access 
-all the metadatas it defines.
+This branch is not in an usable stage. This is a mid-step for getting a better emitter without the need of having a separate `metadata.ts`
+file and two compilation steps. 
 
 # Metadatas
 

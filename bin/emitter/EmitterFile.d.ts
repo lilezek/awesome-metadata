@@ -9,6 +9,7 @@ export interface ISymbol {
 }
 export declare class EmitterFile {
     private tsconfig;
+    __metadataDummyMethod(): void;
     private symbols;
     constructor(tsconfig: any);
     addSymbol(symbol: ISymbol): void;

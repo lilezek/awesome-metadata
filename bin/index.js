@@ -4,4 +4,6 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./export/types"));
+var ClassInjector_1 = require("./injector/ClassInjector");
+exports.DecoratorInjectMetadata = ClassInjector_1.DecoratorInjectMetadata;
 //# sourceMappingURL=index.js.map
