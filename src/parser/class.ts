@@ -1,8 +1,10 @@
 import * as ts from "typescript";
+import { Identificable } from "./identificable";
 import { IType, Type } from "./type";
 
+// tslint:disable-next-line:no-empty-interface
 export interface IInterface {
-  
+
 }
 
 export interface IDeclaration {
@@ -30,7 +32,16 @@ export interface IClass {
   file: string;
 }
 
-export class Class implements IClass {
+export class Class extends Identificable implements IClass {
+  public static calculateId(cl: ts.ClassDeclaration) {
+    const name = (cl.name ? cl.name.getText() : this.calculateAnonClassName(cl));
+    return cl.getSourceFile().fileName + "#" + name;
+  }
+
+  public static calculateAnonClassName(cl: ts.ClassDeclaration) {
+    return "anon@" + cl.getStart();
+  }
+
   public members: Array<IDeclaration & IVisibility> = [];
   public file: string;
   public inherits?: IClass;
@@ -42,7 +53,13 @@ export class Class implements IClass {
   public anon: boolean;
 
   constructor(private cl: ts.ClassDeclaration, private typechecker: ts.TypeChecker) {
+    super();
     this.traverse(cl);
+  }
+
+
+  public get id() {
+    return this.getId();
   }
 
   public getId() {
