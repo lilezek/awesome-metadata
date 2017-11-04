@@ -1,13 +1,30 @@
-import { ETypes } from "../parser/type";
+import { ETypes } from "../metadata/type";
 
 export { ETypes };
+
+export enum EVisibility {
+  NONE,
+  PUBLIC,
+  PRIVATE,
+  PROTECTED,
+}
+
+export interface IVisibility {
+  visibility: EVisibility;
+}
+
+export interface IOptionality {
+  optional: boolean;
+}
+
+export type BodyMember = anyType & IVisibility & IOptionality;
 
 export interface IType {
   kind: ETypes;
 }
 
 export interface IGenericType extends IType {
-  generics?: Array<IClassType|IInterfaceType|IPrimitiveType|IUnionType>;
+  generics?: anyType[];
 }
 
 export interface IUnionType extends IType {
@@ -17,8 +34,8 @@ export interface IUnionType extends IType {
    */
   and: boolean;
 
-  left: IClassType|IInterfaceType|IPrimitiveType|IUnionType;
-  right: IClassType|IInterfaceType|IPrimitiveType|IUnionType;
+  left: anyType;
+  right: anyType;
 }
 
 export interface IPrimitiveType extends IType {
@@ -26,30 +43,19 @@ export interface IPrimitiveType extends IType {
   primitive: string;
 }
 
-export interface IInterfaceType extends IGenericType {
+/**
+ * This represents a type which might be anon.
+ */
+export interface ILiteralType extends IGenericType {
   kind: ETypes.INTERFACE;
   body: {
-    [key: string]: IClassType|IInterfaceType|IPrimitiveType|IUnionType;
+    [key: string]: BodyMember;
   };
 }
 
-export interface IConstructor<T> {
-  prototype: any;
-  new(...args: any[]): T;
-}
-
-export interface IClassType<T = any> extends IGenericType {
+export interface IClassType extends IGenericType {
   kind: ETypes.CLASS;
-  ctor: IConstructor<T>;
-  path?: string;
+  ctor: any;
 }
 
-export interface IElement {
-  type: IClassType|IInterfaceType|IPrimitiveType|IUnionType;
-  visibility: number;
-  optional: boolean;
-}
-
-export interface IBody {
-  [key: string]: IElement;
-}
+export type anyType = (IClassType | ILiteralType | IPrimitiveType | IUnionType);
