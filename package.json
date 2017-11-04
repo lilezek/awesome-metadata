@@ -27,7 +27,7 @@
     "glob": "^7.1.2",
     "reflect-metadata": "^0.1.10",
     "ts-modern-async": "git+https://github.com/lilezek/node-ts-modern-async.git",
-    "ts-simple-ast": "^0.80.0",
+    "ts-simple-ast": "^0.81.1",
     "typescript": "^2.5.3"
   },
   "bin": {

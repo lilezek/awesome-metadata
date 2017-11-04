@@ -1,5 +1,4 @@
 import * as ts from "typescript";
-import { Class } from "./class";
 export declare class SourceFile {
     private sourceFile;
     private typechecker;
@@ -7,6 +6,6 @@ export declare class SourceFile {
     private classes;
     private imports;
     constructor(sourceFile: ts.SourceFile, typechecker: ts.TypeChecker);
-    getClasses(): Class[];
+    getClasses(): any[];
     private traverse(node);
 }

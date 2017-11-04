@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // import { EmitterFile } from "./emitter/EmitterFile";
 // import { TypeScriptProject } from "./parser/project";
 const ts_simple_ast_1 = require("ts-simple-ast");
-const ClassInjector_1 = require("./injector/ClassInjector");
+const classPool_1 = require("./parser/classPool");
 function main() {
     // const project = await TypeScriptProject.create("tsconfig.json");
     // const emitter = new EmitterFile(project.configuration);
@@ -21,7 +21,7 @@ function main() {
     ast.addSourceFiles(ast.getCompilerOptions().rootDir + "/**/*.d.ts");
     const emitterClass = ast.getSourceFileOrThrow("EmitterFile.ts").getClassOrThrow("EmitterFile");
     // Test injector with the emitterClass:
-    ClassInjector_1.InjectMetadataAsFirstDecorator(emitterClass, { foo: "bar" });
+    const injected = new classPool_1.ParsedClass(emitterClass);
     ast.emit();
 }
 main();

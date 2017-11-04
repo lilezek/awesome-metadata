@@ -3,13 +3,13 @@ import { Metadata } from "./metadata";
 export class MetadataArray<T> extends Metadata {
   private internal: T[];
 
-  constructor() {
+  constructor(arr?: T[]) {
     super();
-    this.internal = [];
+    this.internal = arr || [];
   }
 
   public toJavascript(): string {
-    const strings = ["["];
+    const strings = [];
     for (const v of this.internal) {
       if (v instanceof Metadata) {
         strings.push(v.toJavascript());
@@ -17,7 +17,7 @@ export class MetadataArray<T> extends Metadata {
         strings.push(JSON.stringify(v));
       }
     }
-    return strings.join(",") + "]";
+    return "[" + strings.join(",") + "]";
   }
 
   public push(t: T) {

@@ -1,6 +1,8 @@
+import "reflect-metadata";
 import { ClassDeclaration } from "ts-simple-ast/dist/main";
+import { Metadata } from "../metadata/metadata";
 
-export function InjectMetadataAsFirstDecorator(cl: ClassDeclaration, metadata: any, dummyMethod = "__metadataDummyMethod") {
+export function InjectMetadataAsFirstDecorator(cl: ClassDeclaration, metadata: Metadata, dummyMethod = "__metadataDummyMethod") {
   const method = cl.insertMethod(0, {
     name: dummyMethod,
   });
@@ -15,12 +17,12 @@ export function InjectMetadataAsFirstDecorator(cl: ClassDeclaration, metadata: a
 
   method.addDecorator({
     name: "DecoratorInjectMetadata",
-    arguments: ["atm:body", JSON.stringify(metadata)],
+    arguments: [`"atm:body"`, metadata.toJavascript()],
   });
 }
 
 /**
- * This function should not be used inside this project. It is defined here to be imported by 
+ * This function should not be used inside this project. It is defined here to be imported by
  * the projects which uses metadatas.
  * @param metadataKey The metadata key to be defined.
  * @param metadata The metadata to be injected.

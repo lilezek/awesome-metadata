@@ -11,7 +11,9 @@
         "object-literal-sort-keys": [
             false
         ],
-        "forin": false
+        "forin": false,
+        "interface-name": false,
+        "no-bitwise": false
     },
     "rulesDirectory": []
 }

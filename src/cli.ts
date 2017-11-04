@@ -2,6 +2,7 @@
 // import { TypeScriptProject } from "./parser/project";
 import Ast from "ts-simple-ast";
 import { InjectMetadataAsFirstDecorator } from "./injector/ClassInjector";
+import { ParsedClass } from "./parser/classPool";
 
 function main() {
   // const project = await TypeScriptProject.create("tsconfig.json");
@@ -22,7 +23,7 @@ function main() {
 
   const emitterClass = ast.getSourceFileOrThrow("EmitterFile.ts").getClassOrThrow("EmitterFile");
   // Test injector with the emitterClass:
-  InjectMetadataAsFirstDecorator(emitterClass, {foo: "bar"});
+  const injected = new ParsedClass(emitterClass);
 
   ast.emit();
 }

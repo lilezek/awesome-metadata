@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+require("reflect-metadata");
 function InjectMetadataAsFirstDecorator(cl, metadata, dummyMethod = "__metadataDummyMethod") {
     const method = cl.insertMethod(0, {
         name: dummyMethod,
@@ -13,7 +14,7 @@ function InjectMetadataAsFirstDecorator(cl, metadata, dummyMethod = "__metadataD
     });
     method.addDecorator({
         name: "DecoratorInjectMetadata",
-        arguments: ["atm:body", JSON.stringify(metadata)],
+        arguments: [`"atm:body"`, metadata.toJavascript()],
     });
 }
 exports.InjectMetadataAsFirstDecorator = InjectMetadataAsFirstDecorator;

@@ -48,7 +48,7 @@ class EmitterFile {
     }
 }
 __decorate([
-    awesome_metadata_1.DecoratorInjectMetadata({ "foo": "bar" }),
+    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { symbols: { kind: 2, ctor: Array, generics: [{ kind: 1, generics: [], body: {} }] }, tsconfig: { kind: 0, primitive: "any" } }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)

@@ -1,23 +1,35 @@
 import { Metadata } from "./metadata";
 
 export class MetadataObject extends Metadata {
-  constructor(private internal: any) {
+  constructor(protected internal: any) {
     super();
   }
 
   public toJavascript(): string {
-    const strings = [];
-    for (const k in this.internal) {
-      if (this.internal.hasOwnProperty(k)) {
-        const v = this.internal[k];
+    return this.pToJavascript(this.internal);
+  }
+
+  private pToJavascript(x: any): string {
+    const strings = ["{"];
+    let first = true;
+    for (const k in x) {
+      if (!first) {
+        strings.push(",");
+      }
+      first = false;
+      strings.push(k);
+      strings.push(":");
+      if (x.hasOwnProperty(k)) {
+        const v = x[k];
         if (v instanceof Metadata) {
           strings.push(v.toJavascript());
         } else {
           strings.push(JSON.stringify(v));
         }
       }
+
     }
+    strings.push("}");
     return strings.join("");
   }
-
 }

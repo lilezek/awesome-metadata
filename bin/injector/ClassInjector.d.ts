@@ -1,5 +1,7 @@
+import "reflect-metadata";
 import { ClassDeclaration } from "ts-simple-ast/dist/main";
-export declare function InjectMetadataAsFirstDecorator(cl: ClassDeclaration, metadata: any, dummyMethod?: string): void;
+import { Metadata } from "../metadata/metadata";
+export declare function InjectMetadataAsFirstDecorator(cl: ClassDeclaration, metadata: Metadata, dummyMethod?: string): void;
 /**
  * This function should not be used inside this project. It is defined here to be imported by
  * the projects which uses metadatas.
