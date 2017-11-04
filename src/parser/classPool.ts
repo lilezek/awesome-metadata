@@ -5,7 +5,6 @@ import { BodyMember, EVisibility, MetadataBody } from "../metadata/body";
 import { MetadataType } from "../metadata/type";
 import { Parsed } from "./parsed";
 import { AbstractPool } from "./pool";
-import { Type } from "./type";
 
 /**
  * Class that represent a parsed ClassDeclaration and contains
