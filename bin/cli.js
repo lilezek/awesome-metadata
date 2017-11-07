@@ -1,7 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// import { EmitterFile } from "./emitter/EmitterFile";
-// import { TypeScriptProject } from "./parser/project";
 const ts_simple_ast_1 = require("ts-simple-ast");
 const classPool_1 = require("./parser/classPool");
 function main() {

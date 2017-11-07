@@ -23,7 +23,7 @@ class MetadataLiteral extends metadata_1.Metadata {
     }
 }
 __decorate([
-    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { internal: {} }),
+    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { internal: { kind: 0, primitive: "string" } }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)

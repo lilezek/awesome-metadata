@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ts_simple_ast_1 = require("ts-simple-ast");
 const ts = require("typescript");
 const array_1 = require("./array");
 const literal_1 = require("./literal");
@@ -22,6 +23,26 @@ var ETypes;
     ETypes[ETypes["CLASS"] = 2] = "CLASS";
     ETypes[ETypes["UNION"] = 3] = "UNION";
 })(ETypes = exports.ETypes || (exports.ETypes = {}));
+function TypeIsClass(type) {
+    // TODO: This function fails for classes like Map.
+    if (type.getObjectFlags() & ts.ObjectFlags.Class) {
+        return true;
+    }
+    else {
+        if (type.getConstructSignatures().length > 0) {
+            return true;
+        }
+        else {
+            const symbol = type.getSymbol();
+            if (symbol) {
+                if (symbol.getDeclarations().some((d) => d.getKind() === ts.SyntaxKind.ClassDeclaration)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 class MetadataType extends object_1.MetadataObject {
     constructor(type) {
         super({});
@@ -55,7 +76,6 @@ class MetadataType extends object_1.MetadataObject {
             const unionType = this.internal;
             unionType.kind = ETypes.UNION;
             unionType.and = false;
-            console.log(type.getUnionTypes());
             unionType.left = new MetadataType(type.getUnionTypes()[0]);
             unionType.right = new MetadataType(type.getUnionTypes()[1]);
         }
@@ -63,28 +83,54 @@ class MetadataType extends object_1.MetadataObject {
             const unionType = this.internal;
             unionType.kind = ETypes.UNION;
             unionType.and = true;
-            console.log(type.getIntersectionTypes());
             unionType.left = new MetadataType(type.getIntersectionTypes()[0]);
             unionType.right = new MetadataType(type.getIntersectionTypes()[1]);
         }
         else if (type.isObjectType()) {
-            // TODO: Interface marshalling not trivial an not implemented yet.
-            const interfaceType = this.internal;
-            interfaceType.kind = ETypes.INTERFACE;
-            interfaceType.generics = new array_1.MetadataArray();
-            interfaceType.body = {};
+            const objectFlags = type.getObjectFlags();
+            if (TypeIsClass(type)) {
+                const classType = this.internal;
+                classType.kind = ETypes.CLASS;
+                classType.ctor = new literal_1.MetadataLiteral(type.getSymbol().getName());
+                classType.generics = new array_1.MetadataArray(type.getTypeArguments().map((t) => new MetadataType(t)));
+            }
+            else if (objectFlags & ts.ObjectFlags.Interface) {
+                // TODO: Interface marshalling not trivial an not implemented yet.
+                const interfaceType = this.internal;
+                interfaceType.kind = ETypes.INTERFACE;
+                interfaceType.generics = new array_1.MetadataArray();
+                interfaceType.body = {};
+            }
+            else {
+                console.log("Constructors: " + type.getConstructSignatures().length);
+                console.log("Object not parsed: " + objectFlags);
+                console.log("Object's name: " + type.getSymbol().getName());
+            }
         }
         else if (type.getFlags() & ts.TypeFlags.Any) {
             const primitiveType = this.internal;
             primitiveType.kind = ETypes.PRIMITIVE;
             primitiveType.primitive = new string_1.MetadataString("any");
         }
+        else if (type.getFlags() & ts.TypeFlags.String) {
+            const primitiveType = this.internal;
+            primitiveType.kind = ETypes.PRIMITIVE;
+            primitiveType.primitive = new string_1.MetadataString("string");
+        }
+        else if (type.getFlags() & ts.TypeFlags.Number) {
+            const primitiveType = this.internal;
+            primitiveType.kind = ETypes.PRIMITIVE;
+            primitiveType.primitive = new string_1.MetadataString("number");
+        }
+        else {
+            console.log("Type not parsed: " + type.getFlags());
+        }
     }
     __metadataDummyMethod() {
     }
 }
 __decorate([
-    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { internal: { kind: 3, and: false, left: { kind: 1, generics: [], body: {} }, right: { kind: 1, generics: [], body: {} } }, type: { kind: 1, generics: [], body: {} } }),
+    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { internal: { kind: 3, and: false, left: { kind: 1, generics: [], body: {} }, right: { kind: 1, generics: [], body: {} } }, type: { kind: 2, ctor: ts_simple_ast_1.Type, generics: [{ kind: 1, generics: [], body: {} }] } }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)

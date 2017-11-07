@@ -19,7 +19,7 @@ class MetadataNumber extends literal_1.MetadataLiteral {
     }
 }
 __decorate([
-    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { n: {} }),
+    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { n: { kind: 0, primitive: "number" } }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)

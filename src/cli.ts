@@ -1,5 +1,3 @@
-// import { EmitterFile } from "./emitter/EmitterFile";
-// import { TypeScriptProject } from "./parser/project";
 import Ast from "ts-simple-ast";
 import { InjectMetadataAsFirstDecorator } from "./injector/ClassInjector";
 import { ClassPool, ParsedClass } from "./parser/classPool";

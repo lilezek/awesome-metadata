@@ -2,11 +2,15 @@ import "reflect-metadata";
 import { ClassDeclaration } from "ts-simple-ast/dist/main";
 import { Metadata } from "../metadata/metadata";
 
+/**
+ * Adds a dummy method, and a decorator to that method, in order to get that decorator called before any other decorator.
+ * The decorator called is DecoratorInjectMetadata, with the metadata to inject.
+ * @param cl The class to inject the metadata.
+ * @param metadata The metadata to be injected.
+ * @param dummyMethod The name of the dummy method.
+ */
 export function InjectMetadataAsFirstDecorator(cl: ClassDeclaration, metadata: Metadata, dummyMethod = "__metadataDummyMethod") {
-  const method = cl.insertMethod(0, {
-    name: dummyMethod,
-  });
-
+  // Get the class' file, to import the decorator.
   const sourceFile = cl.getSourceFile();
   sourceFile.addImport({
     namedImports: [{
@@ -15,6 +19,12 @@ export function InjectMetadataAsFirstDecorator(cl: ClassDeclaration, metadata: M
     moduleSpecifier: "awesome-metadata",
   });
 
+  // Inject the dummy method.
+  const method = cl.insertMethod(0, {
+    name: dummyMethod,
+  });
+
+  // Then add the injection as decorator.
   method.addDecorator({
     name: "DecoratorInjectMetadata",
     arguments: [`"atm:body"`, metadata.toJavascript()],

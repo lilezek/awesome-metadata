@@ -1,4 +1,4 @@
-import { Type } from "ts-simple-ast";
+import { Symbol as AstSymbol, Type } from "ts-simple-ast";
 import * as ts from "typescript";
 import { MetadataArray } from "./array";
 import { BodyMember } from "./body";
@@ -54,9 +54,28 @@ export interface IClassType extends IGenericType {
 
 export type anyType = (IClassType | ILiteralType | IPrimitiveType | IUnionType);
 
+function TypeIsClass(type: Type) {
+  // TODO: This function fails for classes like Map.
+  if (type.getObjectFlags() & ts.ObjectFlags.Class) {
+    return true;
+  } else {
+    if (type.getConstructSignatures().length > 0) {
+      return true;
+    } else {
+      const symbol = type.getSymbol();
+      if (symbol) {
+        if (symbol.getDeclarations().some((d) => d.getKind() === ts.SyntaxKind.ClassDeclaration)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 export class MetadataType extends MetadataObject {
   protected internal: anyType;
-  
+
   constructor(type: Type) {
     super({});
     if (type.isAnonymousType()) {
@@ -84,26 +103,46 @@ export class MetadataType extends MetadataObject {
       const unionType = this.internal as IUnionType;
       unionType.kind = ETypes.UNION;
       unionType.and = false;
-      console.log(type.getUnionTypes());
       unionType.left = new MetadataType(type.getUnionTypes()[0]);
       unionType.right = new MetadataType(type.getUnionTypes()[1]);
     } else if (type.isIntersectionType()) {
       const unionType = this.internal as IUnionType;
       unionType.kind = ETypes.UNION;
       unionType.and = true;
-      console.log(type.getIntersectionTypes());
       unionType.left = new MetadataType(type.getIntersectionTypes()[0]);
       unionType.right = new MetadataType(type.getIntersectionTypes()[1]);
     } else if (type.isObjectType()) {
-      // TODO: Interface marshalling not trivial an not implemented yet.
-      const interfaceType = this.internal as ILiteralType;
-      interfaceType.kind = ETypes.INTERFACE;
-      interfaceType.generics = new MetadataArray();
-      interfaceType.body = {};
+      const objectFlags = type.getObjectFlags();
+      if (TypeIsClass(type)) {
+        const classType = this.internal as IClassType;
+        classType.kind = ETypes.CLASS;
+        classType.ctor = new MetadataLiteral((type.getSymbol() as AstSymbol).getName());
+        classType.generics = new MetadataArray(type.getTypeArguments().map((t) => new MetadataType(t)));
+      } else if (objectFlags & ts.ObjectFlags.Interface) {
+        // TODO: Interface marshalling not trivial an not implemented yet.
+        const interfaceType = this.internal as ILiteralType;
+        interfaceType.kind = ETypes.INTERFACE;
+        interfaceType.generics = new MetadataArray();
+        interfaceType.body = {};
+      } else {
+        console.log("Constructors: " + type.getConstructSignatures().length);
+        console.log("Object not parsed: " + objectFlags);
+        console.log("Object's name: " + (type.getSymbol() as AstSymbol).getName());
+      }
     } else if (type.getFlags() & ts.TypeFlags.Any) {
       const primitiveType = this.internal as IPrimitiveType;
       primitiveType.kind = ETypes.PRIMITIVE;
       primitiveType.primitive = new MetadataString("any");
+    } else if (type.getFlags() & ts.TypeFlags.String) {
+      const primitiveType = this.internal as IPrimitiveType;
+      primitiveType.kind = ETypes.PRIMITIVE;
+      primitiveType.primitive = new MetadataString("string");
+    } else if (type.getFlags() & ts.TypeFlags.Number) {
+      const primitiveType = this.internal as IPrimitiveType;
+      primitiveType.kind = ETypes.PRIMITIVE;
+      primitiveType.primitive = new MetadataString("number");
+    } else {
+      console.log("Type not parsed: " + type.getFlags());
     }
   }
 }

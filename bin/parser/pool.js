@@ -25,7 +25,7 @@ class AbstractPool {
     }
 }
 __decorate([
-    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { pool: { kind: 1, generics: [], body: {} } }),
+    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { pool: {} }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)

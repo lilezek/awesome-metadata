@@ -27,6 +27,8 @@ export class ParsedClass extends Parsed<ClassDeclaration> {
     super(cl);
     this.metadataBody = new MetadataBody();
     this.traverse(cl);
+    // TODO: Inject only if the class is not external. For instance, we should not inject
+    // metadata as decorator for <b>Data</b> class.
     InjectMetadataAsFirstDecorator(cl, this.metadataBody);
   }
 
@@ -86,40 +88,6 @@ export class ParsedClass extends Parsed<ClassDeclaration> {
       });
     } else if (node.getKind() === ts.SyntaxKind.MethodDeclaration) {
       // TODO: do something with methods.
-      // const method = node as ts.MethodDeclaration;
-      // let visibility = ts.ModifierFlags.Private;
-      // if (method.modifiers) {
-      //   method.modifiers.forEach((element) => {
-      //     if (element.kind === ts.SyntaxKind.PublicKeyword) {
-      //       visibility = ts.ModifierFlags.Public;
-      //     } else if (element.kind === ts.SyntaxKind.PrivateKeyword) {
-      //       visibility = ts.ModifierFlags.Private;
-      //     }
-      //   });
-      // }
-
-      // const parameters = [] as Serial.UMLClassProperty[];
-
-      // method.parameters.forEach((el) => {
-      //   parameters.push({
-      //     name: (el.name ? el.name.getText() : ""),
-      //     type: (el.type ? el.type.getText() : ""),
-      //     default: (el.initializer ? el.getText() : undefined),
-      //   });
-      // });
-
-      // const signature = this.typechecker.getSignatureFromDeclaration(method) as ts.Signature;
-      // const type = this.typechecker.getReturnTypeOfSignature(signature);
-      // const stringType = this.typechecker.typeToString(type);
-
-      // // TODO: use visibility
-      // if (visibility as ts.ModifierFlags === ts.ModifierFlags.Public) {
-      //   this.methods.push({
-      //     name: method.name.getText(),
-      //     type: (stringType === "void" ? "" : stringType),
-      //     arguments: parameters,
-      //   });
-      // }
     }
     node.getChildren().forEach((child) => this.traverse(child));
   }
@@ -127,7 +95,6 @@ export class ParsedClass extends Parsed<ClassDeclaration> {
 
 // tslint:disable-next-line:max-classes-per-file
 export class ClassPool extends AbstractPool<ParsedClass> {
-  // tslint:disable-next-line:variable-name
   private static pSingleton: ClassPool;
 
   static get singleton() {
