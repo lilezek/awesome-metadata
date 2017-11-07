@@ -23,7 +23,7 @@ export class ParsedClass extends Parsed<ClassDeclaration> {
 
   private metadataBody: MetadataBody;
 
-  constructor(cl: ClassDeclaration) {
+  protected constructor(cl: ClassDeclaration) {
     super(cl);
     this.metadataBody = new MetadataBody();
     this.traverse(cl);
@@ -132,6 +132,22 @@ export class ClassPool extends AbstractPool<ParsedClass> {
 
   static get singleton() {
     return this.pSingleton || (this.pSingleton = new ClassPool());
+  }
+
+  /**
+   * Parses a class if it is not already parsed. If it is already parsed, it just returns the parsed copy class.
+   * @param cl Class declaration to parse.
+   */
+  public parseClass(cl: ClassDeclaration) {
+    let parsed = this.fromClassDeclaration(cl);
+    if (parsed) {
+      return parsed;
+    } else {
+      // Call protected constructor.
+      parsed = new (ParsedClass as any)(cl) as ParsedClass;
+      this.add(parsed);
+      return parsed;
+    }
   }
 
   public fromClassDeclaration(cl: ClassDeclaration) {

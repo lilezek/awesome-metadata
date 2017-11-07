@@ -2,29 +2,24 @@
 // import { TypeScriptProject } from "./parser/project";
 import Ast from "ts-simple-ast";
 import { InjectMetadataAsFirstDecorator } from "./injector/ClassInjector";
-import { ParsedClass } from "./parser/classPool";
+import { ClassPool, ParsedClass } from "./parser/classPool";
 
 function main() {
-  // const project = await TypeScriptProject.create("tsconfig.json");
-  // const emitter = new EmitterFile(project.configuration);
-  // project.traversedSourceFiles.forEach((sf) => {
-  //   sf.getClasses().forEach((cl) => {
-  //     emitter.addSymbol(cl);
-  //   });
-  // });
-  // console.log(emitter.generateFileString());
-
+  // Configure project:
   const ast = new Ast({ tsConfigFilePath: "tsconfig.json" });
-  // HACK: adding manually these files:
+  // TODO: do not add manually the files.
   const sourceRoot = ast.getCompilerOptions().rootDir || ast.getCompilerOptions().sourceRoot || ".";
   ast.addSourceFiles(ast.getCompilerOptions().rootDir + "/**/*.ts");
   ast.addSourceFiles(ast.getCompilerOptions().rootDir + "/**/*.tsx");
   ast.addSourceFiles(ast.getCompilerOptions().rootDir + "/**/*.d.ts");
 
-  const emitterClass = ast.getSourceFileOrThrow("EmitterFile.ts").getClassOrThrow("EmitterFile");
-  // Test injector with the emitterClass:
-  const injected = new ParsedClass(emitterClass);
-
+  // Get class pool:
+  const classPool = ClassPool.singleton;
+  for (const file of ast.getSourceFiles()) {
+    for (const cl of file.getClasses()) {
+      const injected = classPool.parseClass(cl);
+    }
+  }
   ast.emit();
 }
 

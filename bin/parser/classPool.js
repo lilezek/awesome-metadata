@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ts = require("typescript");
 const ClassInjector_1 = require("../injector/ClassInjector");
@@ -6,11 +15,20 @@ const body_1 = require("../metadata/body");
 const type_1 = require("../metadata/type");
 const parsed_1 = require("./parsed");
 const pool_1 = require("./pool");
+const awesome_metadata_1 = require("awesome-metadata");
 /**
  * Class that represent a parsed ClassDeclaration and contains
  * all the needed data to generate metadata.
  */
 class ParsedClass extends parsed_1.Parsed {
+    constructor(cl) {
+        super(cl);
+        this.metadataBody = new body_1.MetadataBody();
+        this.traverse(cl);
+        ClassInjector_1.InjectMetadataAsFirstDecorator(cl, this.metadataBody);
+    }
+    __metadataDummyMethod() {
+    }
     static calculateId(cl) {
         // Question? What happens if the class is anonymous.
         const name = (cl.getName() ? cl.getName() : this.calculateAnonClassName(cl));
@@ -18,12 +36,6 @@ class ParsedClass extends parsed_1.Parsed {
     }
     static calculateAnonClassName(cl) {
         return "anon@" + cl.getStart();
-    }
-    constructor(cl) {
-        super(cl);
-        this.metadataBody = new body_1.MetadataBody();
-        this.traverse(cl);
-        ClassInjector_1.InjectMetadataAsFirstDecorator(cl, this.metadataBody);
     }
     get id() {
         return this.getId();
@@ -119,15 +131,45 @@ class ParsedClass extends parsed_1.Parsed {
         node.getChildren().forEach((child) => this.traverse(child));
     }
 }
+__decorate([
+    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { metadataBody: { kind: 1, generics: [], body: {} }, cl: { kind: 1, generics: [], body: {} } }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ParsedClass.prototype, "__metadataDummyMethod", null);
 exports.ParsedClass = ParsedClass;
 // tslint:disable-next-line:max-classes-per-file
 class ClassPool extends pool_1.AbstractPool {
+    __metadataDummyMethod() {
+    }
     static get singleton() {
         return this.pSingleton || (this.pSingleton = new ClassPool());
+    }
+    /**
+     * Parses a class if it is not already parsed. If it is already parsed, it just returns the parsed copy class.
+     * @param cl Class declaration to parse.
+     */
+    parseClass(cl) {
+        let parsed = this.fromClassDeclaration(cl);
+        if (parsed) {
+            return parsed;
+        }
+        else {
+            // Call protected constructor.
+            parsed = new ParsedClass(cl);
+            this.add(parsed);
+            return parsed;
+        }
     }
     fromClassDeclaration(cl) {
         return this.pool.get(ParsedClass.calculateId(cl));
     }
 }
+__decorate([
+    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { pSingleton: { kind: 1, generics: [], body: {} } }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ClassPool.prototype, "__metadataDummyMethod", null);
 exports.ClassPool = ClassPool;
 //# sourceMappingURL=classPool.js.map

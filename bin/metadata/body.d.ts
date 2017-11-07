@@ -17,6 +17,7 @@ export declare type BodyMember = MetadataType & IVisibility & IOptionality;
  * In order to use this metadata, just define the body member.
  */
 export declare class MetadataBody extends MetadataObject {
+    __metadataDummyMethod(): void;
     body: {
         [key: string]: BodyMember;
     };
