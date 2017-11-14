@@ -44,7 +44,6 @@ export interface IClassType extends IGenericType {
 }
 export declare type anyType = (IClassType | ILiteralType | IPrimitiveType | IUnionType);
 export declare class MetadataType extends MetadataObject {
-    __metadataDummyMethod(): void;
     protected internal: anyType;
     constructor(type: Type);
 }

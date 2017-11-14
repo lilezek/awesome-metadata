@@ -6,7 +6,6 @@ import { AbstractPool } from "./pool";
  * all the needed data to generate metadata.
  */
 export declare class ParsedInterface extends Parsed<InterfaceDeclaration> {
-    __metadataDummyMethod(): void;
     static calculateId(iface: InterfaceDeclaration): string;
     static calculateAnonInterfaceName(iface: InterfaceDeclaration): string;
     private metadataBody;
@@ -17,7 +16,6 @@ export declare class ParsedInterface extends Parsed<InterfaceDeclaration> {
     private traverse(node);
 }
 export declare class InterfacePool extends AbstractPool<ParsedInterface> {
-    __metadataDummyMethod(): void;
     private static pSingleton;
     static readonly singleton: InterfacePool;
     /**

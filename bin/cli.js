@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ts_simple_ast_1 = require("ts-simple-ast");
-const classPool_1 = require("./parser/classPool");
+const ProjectInjector_1 = require("./injector/ProjectInjector");
 function main() {
     // Configure project:
     const ast = new ts_simple_ast_1.default({ tsConfigFilePath: "tsconfig.json" });
@@ -10,12 +10,10 @@ function main() {
     ast.addSourceFiles(ast.getCompilerOptions().rootDir + "/**/*.ts");
     ast.addSourceFiles(ast.getCompilerOptions().rootDir + "/**/*.tsx");
     ast.addSourceFiles(ast.getCompilerOptions().rootDir + "/**/*.d.ts");
-    // Get class pool:
-    const classPool = classPool_1.ClassPool.singleton;
+    // Inject metadata in project:
+    const metadata = new ProjectInjector_1.ProjectInjector(ast);
     for (const file of ast.getSourceFiles()) {
-        for (const cl of file.getClasses()) {
-            const injected = classPool.parseClass(cl);
-        }
+        metadata.injectMetadataInSourceFile(file);
     }
     ast.emit();
 }

@@ -27,9 +27,10 @@ export class ParsedClass extends Parsed<ClassDeclaration> {
     super(cl);
     this.metadataBody = new MetadataBody();
     this.traverse(cl);
-    // TODO: Inject only if the class is not external. For instance, we should not inject
-    // metadata as decorator for <b>Data</b> class.
-    InjectMetadataAsFirstDecorator(cl, this.metadataBody);
+  }
+
+  public getMetadata() {
+    return this.metadataBody;
   }
 
   public get id() {

@@ -1,4 +1,4 @@
-import { Symbol as AstSymbol, Type } from "ts-simple-ast";
+import { Symbol as AstSymbol, Type, TypeGuards } from "ts-simple-ast";
 import * as ts from "typescript";
 import { MetadataArray } from "./array";
 import { BodyMember } from "./body";
@@ -64,8 +64,13 @@ function TypeIsClass(type: Type) {
     } else {
       const symbol = type.getSymbol();
       if (symbol) {
-        if (symbol.getDeclarations().some((d) => d.getKind() === ts.SyntaxKind.ClassDeclaration)) {
-          return true;
+        for (const declaration of symbol.getDeclarations()) {
+          if (TypeGuards.isClassDeclaration(declaration)) {
+            return true;
+          }
+          if (TypeGuards.isVariableDeclaration(declaration) && declaration.getType().getConstructSignatures().length > 0) {
+            return true;
+          }
         }
       }
     }

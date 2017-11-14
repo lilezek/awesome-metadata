@@ -1,4 +1,5 @@
 import { ClassDeclaration } from "ts-simple-ast";
+import { MetadataBody } from "../metadata/body";
 import { Parsed } from "./parsed";
 import { AbstractPool } from "./pool";
 /**
@@ -6,18 +7,17 @@ import { AbstractPool } from "./pool";
  * all the needed data to generate metadata.
  */
 export declare class ParsedClass extends Parsed<ClassDeclaration> {
-    __metadataDummyMethod(): void;
     static calculateId(cl: ClassDeclaration): string;
     static calculateAnonClassName(cl: ClassDeclaration): string;
     private metadataBody;
     protected constructor(cl: ClassDeclaration);
+    getMetadata(): MetadataBody;
     readonly id: string;
     getId(): string;
     isInjected(): boolean;
     private traverse(node);
 }
 export declare class ClassPool extends AbstractPool<ParsedClass> {
-    __metadataDummyMethod(): void;
     private static pSingleton;
     static readonly singleton: ClassPool;
     /**

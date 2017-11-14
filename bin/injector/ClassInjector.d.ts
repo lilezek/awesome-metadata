@@ -8,7 +8,7 @@ import { Metadata } from "../metadata/metadata";
  * @param metadata The metadata to be injected.
  * @param dummyMethod The name of the dummy method.
  */
-export declare function InjectMetadataAsFirstDecorator(cl: ClassDeclaration, metadata: Metadata, dummyMethod?: string): void;
+export declare function InjectMetadataAsFirstDecorator(cl: ClassDeclaration, metadata: Metadata, addImport?: boolean, dummyMethod?: string): void;
 /**
  * This function should not be used inside this project. It is defined here to be imported by
  * the projects which uses metadatas.

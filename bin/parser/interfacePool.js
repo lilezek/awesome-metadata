@@ -1,33 +1,15 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ts_simple_ast_1 = require("ts-simple-ast");
 const ts = require("typescript");
 const body_1 = require("../metadata/body");
 const type_1 = require("../metadata/type");
 const parsed_1 = require("./parsed");
 const pool_1 = require("./pool");
-const awesome_metadata_1 = require("awesome-metadata");
 /**
  * Class that represent a parsed InterfaceDeclaration and contains
  * all the needed data to generate metadata.
  */
 class ParsedInterface extends parsed_1.Parsed {
-    constructor(iface) {
-        super(iface);
-        this.metadataBody = new body_1.MetadataBody();
-        this.traverse(iface);
-    }
-    __metadataDummyMethod() {
-    }
     static calculateId(iface) {
         // Question? What happens if the class is anonymous.
         const name = (iface.getName() ? iface.getName() : this.calculateAnonInterfaceName(iface));
@@ -35,6 +17,11 @@ class ParsedInterface extends parsed_1.Parsed {
     }
     static calculateAnonInterfaceName(iface) {
         return "anon@" + iface.getStart();
+    }
+    constructor(iface) {
+        super(iface);
+        this.metadataBody = new body_1.MetadataBody();
+        this.traverse(iface);
     }
     get id() {
         return this.getId();
@@ -100,17 +87,9 @@ class ParsedInterface extends parsed_1.Parsed {
         node.getChildren().forEach((child) => this.traverse(child));
     }
 }
-__decorate([
-    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { metadataBody: { kind: 2, ctor: body_1.MetadataBody, generics: [] }, iface: { kind: 2, ctor: ts_simple_ast_1.InterfaceDeclaration, generics: [] } }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ParsedInterface.prototype, "__metadataDummyMethod", null);
 exports.ParsedInterface = ParsedInterface;
 // tslint:disable-next-line:max-classes-per-file
 class InterfacePool extends pool_1.AbstractPool {
-    __metadataDummyMethod() {
-    }
     static get singleton() {
         return this.pSingleton || (this.pSingleton = new InterfacePool());
     }
@@ -134,11 +113,5 @@ class InterfacePool extends pool_1.AbstractPool {
         return this.pool.get(ParsedInterface.calculateId(iface));
     }
 }
-__decorate([
-    awesome_metadata_1.DecoratorInjectMetadata("atm:body", { pSingleton: { kind: 2, ctor: InterfacePool, generics: [] } }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], InterfacePool.prototype, "__metadataDummyMethod", null);
 exports.InterfacePool = InterfacePool;
 //# sourceMappingURL=interfacePool.js.map

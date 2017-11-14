@@ -20,8 +20,8 @@ The goal of this project is to offer metadata for all elements in TypeScript, be
 ## Features
 
 * [ ] Class body schema metadata `atm:body`
-  * [x] Visibility (private, protected, public, none)
-  * [x] Optionality (question mark token) 
+  * [x] Visibility (private, protected, public, none) **BROKEN IN THIS BRANCH**
+  * [x] Optionality (question mark token) **BROKEN IN THIS BRANCH**
   * [x] Primitive members serialization
   * [x] Union types serialization
   * [x] Type alias serialization
@@ -37,8 +37,24 @@ The goal of this project is to offer metadata for all elements in TypeScript, be
 
 # Usage
 
-This branch is not in an usable stage. This is a mid-step for getting a better emitter without the need of having a separate `metadata.ts`
-file and two compilation steps. 
+We use it this way:
+
+In package.json:
+``` json
+{
+  "scripts": {
+    "compile": "atm"
+  }
+}
+```
+
+Then instead of compiling using `tsc`, you compile using
+
+```sh
+npm run compile
+# or
+atm
+```
 
 # Metadatas
 

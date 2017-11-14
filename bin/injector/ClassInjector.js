@@ -8,15 +8,17 @@ require("reflect-metadata");
  * @param metadata The metadata to be injected.
  * @param dummyMethod The name of the dummy method.
  */
-function InjectMetadataAsFirstDecorator(cl, metadata, dummyMethod = "__metadataDummyMethod") {
+function InjectMetadataAsFirstDecorator(cl, metadata, addImport = true, dummyMethod = "__metadataDummyMethod") {
     // Get the class' file, to import the decorator.
     const sourceFile = cl.getSourceFile();
-    sourceFile.addImport({
-        namedImports: [{
-                name: "DecoratorInjectMetadata",
-            }],
-        moduleSpecifier: "awesome-metadata",
-    });
+    if (addImport) {
+        sourceFile.addImport({
+            namedImports: [{
+                    name: "DecoratorInjectMetadata",
+                }],
+            moduleSpecifier: "awesome-metadata",
+        });
+    }
     // Inject the dummy method.
     const method = cl.insertMethod(0, {
         name: dummyMethod,
@@ -36,7 +38,7 @@ exports.InjectMetadataAsFirstDecorator = InjectMetadataAsFirstDecorator;
  */
 function DecoratorInjectMetadata(metadataKey, metadata) {
     return (target, propertyKey, descriptor) => {
-        Reflect.defineMetadata(metadataKey, metadata, target.body);
+        Reflect.defineMetadata(metadataKey, metadata, target.constructor);
     };
 }
 exports.DecoratorInjectMetadata = DecoratorInjectMetadata;
